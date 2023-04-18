@@ -12,7 +12,7 @@ format:
 ---
 
 ::: {.callout-important}
-## Still fact-checking
+## Fact-checking in progress 
 
 This analysis and the numbers throughout are being fact-checked by external data, experts and colleagues. They aren't final numbers and will not be considered "final" until the article related to this reporting is published. If you find any errors or potential errors, please let Dillon Bergin (dillon@muckrock.com) know. 
 :::
