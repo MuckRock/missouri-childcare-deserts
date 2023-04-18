@@ -181,7 +181,7 @@ datatable(mo_zctas_with_pop, filter = 'top', class = 'cell-border stripe order-c
 # How did childcare deserts change during the pandemic?
 From 2019 to September 2020, the number of childcare programs decreased by 30%, leaving 70,000 more children in childcare deserts than the year before. During 2020, the number of children in childcare deserts was the highest it has reached in the last several years. 
 
-The number of programs bounced back sharply by six months later though, and since 2021, the number of children in childcare deserts has steadily towards where it was pre-pandemic. 
+The number of programs bounced back sharply by six months later though, and since 2021, the number of children in childcare deserts has steadily moved towards where pre-pandemic numbers. 
 
 ```{r}
 yearly_deserts <- childcare_aware %>% 
