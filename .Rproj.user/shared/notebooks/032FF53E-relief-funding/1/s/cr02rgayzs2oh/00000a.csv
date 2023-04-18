@@ -1,0 +1,11 @@
+"0","zip_desert_money <- pandemic_deserts %>% 
+  inner_join(zip_code_startup_expansion, by = c(""zcta"" = ""zip""))
+"
+"1","[1m[33mError[39m in [38;5;254m`inner_join()`[39m:[22m
+[38;5;254m[33m![38;5;254m Can't join on `x$zcta` x `y$zcta` because of incompatible types.
+[36mi[38;5;254m `x$zcta` is of type <double>>.
+[36mi[38;5;254m `y$zcta` is of type <character>>.[39m
+Backtrace:
+[90m 1. [39mpandemic_deserts %>% ...
+[90m 3. [39m[38;5;254m[1m[94mdplyr:::inner_join.data.frame([38;5;254m[22m[39m., zip_code_startup_expansion, by = c(zcta = ""zip"")[38;5;254m[1m[94m)[38;5;254m[22m[39m
+"

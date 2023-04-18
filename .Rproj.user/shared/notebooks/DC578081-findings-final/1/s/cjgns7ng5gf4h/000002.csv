@@ -1,0 +1,6 @@
+"0","# MAP DATA "
+"0","#| output: true"
+"0","tm_shape(map_df_sf) +"
+"0","  tm_polygons(""status_num"","
+"0","              palette = ""Reds"","
+"0","              legend.show = FALSE)"

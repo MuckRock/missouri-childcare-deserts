@@ -1,0 +1,20 @@
+"0","# Load cleaned data from ChildCareAware survey dated March, 2023
+survey_data <- read_csv(here(""data"", ""processed"", ""ChildCareAware_cleaned.csv"")) %>% 
+  mutate(zip = as.character(zip)) %>% 
+  mutate(ratio = children_under_six/licensed_capacity) %>% 
+  mutate(desert_status = case_when(ratio >= 3 ~ ""desert"", ratio <= 3 ~ ""non-desert""))
+"
+"1","[38;5;254mNew names:
+[36m*[38;5;254m [38;5;254m``[38;5;254m -> [38;5;254m`...1`[38;5;254m[39m
+"
+"1","[1mRows: [22m[34m3885[39m [1mColumns: [22m[34m8[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m-----------------------------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): month
+[32mdbl[39m (7): ...1, zip, childcare_programs, licensed_capacity, programs_accepting_subsidies, children_under_six, year
+"
+"1","
+[36mi[39m Use `spec()` to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"

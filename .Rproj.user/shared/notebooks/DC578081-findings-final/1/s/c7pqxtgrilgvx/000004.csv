@@ -1,0 +1,11 @@
+"0","### JOIN CROSSWAKLED DATA WITH GEOM FOR MAPPING ### "
+"0","# Now we can use zctas to get geoms for mapping "
+"0",""
+"0","# Get the 2017-2021 5-year ACS ZTCAs for the whole US so that we can join these with zip codes and get geoms for mapping"
+"0","zcta_geoms <- get_acs(geography = ""zip code tabulation area"", variables = ""B19013_001"","
+"0","                summary_var = ""B01001_001"", geometry = TRUE)  "
+"2","Getting data from the 2017-2021 5-year ACS
+"
+"0","  select(GEOID, geometry)"
+"2","Error in select(GEOID, geometry) : object 'GEOID' not found
+"

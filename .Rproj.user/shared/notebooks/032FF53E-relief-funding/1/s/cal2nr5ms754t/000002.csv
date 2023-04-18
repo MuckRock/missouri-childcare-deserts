@@ -1,0 +1,17 @@
+"0","# Load cleaned and crosswalked data "
+"0","survey <- read_csv(here(""data"", ""processed"", ""ChildCareAware_cleaned_and_crosswalked.csv"")) %>% "
+"0","  select(zcta, year, month, licensed_capacity, pop_5_and_under)"
+"1","[38;5;254mNew names:
+[36m*[38;5;254m [38;5;254m``[38;5;254m -> [38;5;254m`...1`[38;5;254m[39m
+"
+"1","[1mRows: [22m[34m3849[39m [1mColumns: [22m[34m8[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m-------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): month
+[32mdbl[39m (7): ...1, zcta, year, childcare_programs, programs_accepting_subsidies, licensed_capacit...
+"
+"1","
+[36mi[39m Use `spec()` to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"

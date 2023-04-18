@@ -1,0 +1,15 @@
+"0","# Count the NAs for paid_amount ... there are a lot of pending applications I guess that haven't been paid 
+zip_code_startup_expansion <- startup_expansion %>% 
+  mutate(zip = str_sub(zip_code, 1, 5)) %>% 
+  group_by(zip) %>% 
+  summarize(total_money = sum(paid_amount))
+"
+"1","[1m[33mError[39m in [38;5;254m`mutate()`[39m:[22m
+[38;5;254m[33m![38;5;254m Problem while computing `zip = str_sub(zip_code, 1, 5)`.[39m
+[1mCaused by error in [38;5;254m`stri_sub()`[39m:[22m
+[33m![39m object 'zip_code' not found
+Backtrace:
+[90m  1. [39m... %>% summarize(total_money = sum(paid_amount))
+[90m  9. [39m[1mstringr[22m::str_sub(zip_code, 1, 5)
+[90m 10. [39m[1mstringi[22m::stri_sub(string, from = start, to = end)
+"

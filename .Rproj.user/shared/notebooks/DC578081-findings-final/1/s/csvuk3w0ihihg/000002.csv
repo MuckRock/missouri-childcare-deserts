@@ -1,0 +1,35 @@
+"0","# LOAD DATA"
+"0","# Load clean and crosswalked data for all zctas from ChildCareAware survey"
+"0","# There are 475 unique zctas for 2023 in the data"
+"0","survey_data <- read_csv(here(""data"", ""processed"", ""ChildCareAware_cleaned_and_crosswalked.csv"")) %>% "
+"0","  mutate(zcta = as.character(zcta)) %>% "
+"0","  filter(year == 2023)"
+"1","[38;5;254mNew names:
+[36m*[38;5;254m [38;5;254m``[38;5;254m -> [38;5;254m`...1`[38;5;254m[39m
+"
+"1","[1mRows: [22m[34m3849[39m [1mColumns: [22m[34m8[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m--------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): month
+[32mdbl[39m (7): ...1, zcta, year, childcare_programs, programs_accepting_subsidies, licen...
+"
+"1","
+[36mi[39m Use `spec()` to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","# Load all zctas not included in ChildCareAware survey "
+"0","# There are 1023 unique zctas in MO according to thise crosswalk"
+"0","mo_zctas <- read_excel(here(""data"", ""raw"", ""ZIPCodetoZCTACrosswalk2021UDS.xlsx""), sheet = 1) %>% "
+"0","  clean_names() %>% "
+"0","  filter(state == ""MO"") %>% "
+"0","  distinct(zcta)"
+"0","  "
+"0","# Add back in all zctas not included in survey so that we can map them all together"
+"0","map_df <-  survey_data %>% "
+"0","  right_join(mo_zctas, by = ""zcta"") %>% "
+"0","  mutate(ratio = pop_5_and_under / licensed_capacity) %>% "
+"0","  mutate(status = case_when(is.na(ratio) ~ ""non-desert"", ratio < 3 ~ ""non-desert"", ratio >= 3 & ratio < 10 ~ ""desert"", ratio >= 10 ~ ""extreme"", TRUE ~ ""test"")) %>% "
+"0","  mutate(status_num = case_when(is.na(ratio) ~ 0, ratio < 3 ~ 0, ratio >= 3 & ratio < 10 ~ 1, ratio >= 10 ~ 2, TRUE ~ 0)) %>% "
+"0","  select(zcta, status, status_num, ratio)"
+"0",""
