@@ -29,20 +29,20 @@ tmap_mode("view")
 # Missouri's childcare deserts in 2023, by Zip Code Tabulation Area
 ```{r}
 # LOAD DATA
+
 # Load clean and crosswalked data for all zctas from ChildCareAware survey
-# There are 475 unique zctas for 2023 in the data
 childcare_aware <- read_csv(here("data", "processed", "ChildCareAware_cleaned_and_crosswalked.csv")) %>% 
   mutate(zcta = as.character(zcta)) 
 
-childcare_aware_2023 <- childcare_aware %>% 
-  filter(year == 2023)
+# Load clean and crosswalked data for all zctas from ChildCareAware survey, with all other zctas and populations baked in 
+childcare_supply_and_demand_2019_2023 <-  read_csv(here("data", "processed", "childcare_supply_and_demand_2019_2023.csv")) %>% 
+  mutate(zcta = as.character(zcta))
 
 # Load all zctas not included in ChildCareAware survey 
 # There are 1023 unique zctas in MO according to these crosswalk
 mo_zctas <- read_excel(here("data", "raw", "ZIPCodetoZCTACrosswalk2021UDS.xlsx"), sheet = 1) %>% 
   clean_names() %>% 
-  filter(state == "MO") %>% 
-  distinct(zcta)
+  filter(state == "MO")
 
 # 5 year ACS estimates pf population five and under for all zctas in the country
 acs <- read_csv(here("data", "processed", "pop_zcta_5acs.csv"))
@@ -54,40 +54,32 @@ crrsa_startup_expansion <-  read_excel(here("data","raw", "CRRSA Startup and Exp
 relief_funding <- read_csv(here("data", "processed", "all_relief_cleaned.csv")) %>% 
   mutate(zip = as.character(zip))
 
-# Zip code to zcta crosswalk file from UDS Mapper 
-zip_zcta_crosswalk <- read_excel(here("data", "raw", "ZIPCodetoZCTACrosswalk2021UDS.xlsx"), sheet = 1) %>% 
-  clean_names()
-
 
 # Join crosswalk with relief funding zips to that each zip matches a zcta to correspond to desert data
-# Success! All zips found a zcta
 relief_zcta <- relief_funding %>% 
-  inner_join(zip_zcta_crosswalk, by = c("zip" = "zip_code"))
+  inner_join(mo_zctas, by = c("zip" = "zip_code"))
   
 
 
 ```
-
+  
 ```{r}
-# Join MO ZCTAs with ACS data to catch zip codes with no providers but more than TK children
-no_provider_join <- mo_zctas %>% 
-  left_join(acs, by = c("zcta" = "GEOID")) %>% 
-  select(zcta, pop_5_and_under)
-
-# Add back in all zctas not included in survey so that we can map them all together
-map_df <-  childcare_aware_2023 %>% 
-  right_join(no_provider_join, by = c("zcta", "pop_5_and_under")) %>%  
+supply_and_demand_2023 <- childcare_supply_and_demand_2019_2023 %>% 
+  filter(year == "2023") %>% 
   mutate(ratio = pop_5_and_under / licensed_capacity) %>% 
   mutate(status = case_when(ratio < 3 ~ "non-desert", 
                             ratio >= 3 & ratio < 10 ~ "desert", 
                             ratio >= 10 ~ "extreme", 
                             is.na(ratio) & pop_5_and_under >= 50 ~ "desert",
                             is.na(ratio) & pop_5_and_under < 50 ~ "non-desert",
-                            TRUE ~ "non-desert")) %>%
+                            TRUE ~ "non-desert"))
+  
+
+map_df <- supply_and_demand_2023 %>% 
   mutate(status_num = case_when(status == "non-desert" ~ 0,
                                 status == "desert" ~ 1,
                                 status == "extreme" ~ 3)) %>% 
-  select(zcta, status, status_num, ratio)
+    select(zcta, status, status_num, ratio)
 
 #write.csv(map_df, "datawrapper_map.csv")
 
@@ -128,17 +120,14 @@ tm_shape(map_df_sf) +
 
 # Total number of children five or under in childcare deserts across Missouri in 2023
 
-171,048 children of five or under across Missouri live in zip codes areas that are childcare deserts. This is over one-third of children five or under.  
+202,318 children of five or under across Missouri live in zip codes areas that are childcare deserts. This is almost half of children five or under.  
 
 ```{r}
-deserts_2023 <- childcare_aware %>% 
-select(zcta, year, month, licensed_capacity, pop_5_and_under) %>% 
-  filter(year == "2023") %>% 
-  mutate(ratio = pop_5_and_under / licensed_capacity) %>% 
-  filter(ratio >= 3)
+deserts_2023 <- supply_and_demand_2023 %>% 
+  filter(status %in% c("desert", "extreme"))
 
-# 171,048 in 227 zctas that are childcare deserts
-sum(deserts_2023$pop_5_and_under)
+# 202,318 in 227 zctas that are childcare deserts
+sum(deserts_2023$pop_5_and_under, na.rm = TRUE)
 
 
 # Same five ZCTAs didn't join, but again, these are non-deserts PO boxes anyway
@@ -148,6 +137,8 @@ mo_zctas_with_pop <- mo_zctas %>%
 
 #  442,254 children under 5 or under across the state
 sum(mo_zctas_with_pop$pop_5_and_under, na.rm=TRUE)
+
+percent_in_deserts <- 202318/442254
 
 ```
 ### Population in childcare deserts 
@@ -186,8 +177,7 @@ datatable(mo_zctas_with_pop, filter = 'top', class = 'cell-border stripe order-c
 ```
 
 ## Methodology
-- The number of children in deserts is the total amount of children in zctas with ratios greater than or equal to 3:1
--  This equals out to 171,048 in 227 zctas that are childcare deserts. In total, there are 442,254 children under 5 or under across the state
+- The number of children in deserts is the total amount of children in zctas with ratios greater than or equal to 3:1 OR any zip code with more than 50 children where there are no providers 
 
 
 # How did childcare deserts change during the pandemic?
@@ -196,9 +186,14 @@ From 2019 to September 2020, the number of childcare programs decreased by 30%, 
 The number of programs bounced back sharply by six months later though, and since 2021, the number of children in childcare deserts has steadily towards where it was pre-pandemic. 
 
 ```{r}
-yearly_deserts <- childcare_aware %>% 
+yearly_deserts <- childcare_supply_and_demand_2019_2023 %>% 
   mutate(ratio = pop_5_and_under / licensed_capacity) %>% 
-  filter(ratio >= 3) %>% 
+  mutate(status = case_when(ratio < 3 ~ "non-desert", 
+                            ratio >= 3 ~ "desert", 
+                            is.na(ratio) & pop_5_and_under >= 50 ~ "desert",
+                            is.na(ratio) & pop_5_and_under < 50 ~ "non-desert",
+                            TRUE ~ "non-desert")) %>% 
+  filter(status == "desert") %>% 
   group_by(year, month) %>% 
   summarize(children_in_deserts = sum(pop_5_and_under))
 
@@ -305,27 +300,26 @@ datatable(real_capacity, filter = 'top', class = 'cell-border stripe order-colum
 
 # Did pandemic relief funding go to childcare desert zips we've indentified?
 
-Of the total of 114,681,667 dollars in the data we recieved, less than a fourth of it went to childcare deserts. 
-
-<div><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/vqeRc/embed.js?v=1" charset="utf-8"></script><noscript><img src="https://datawrapper.dwcdn.net/vqeRc/full.png" alt="" /></noscript></div>
+Of the total of 229,363,334 dollars in the data we recieved, 55,014,524, or about fourth of it went to childcare deserts.
 
 
 ```{r}
-# Filter the capacity deserts to data from 2021 and 2022, aggregate the bi-yearly data to yearly, and remove non-desert zctas
-childcare_aware_2021_2022 <- childcare_aware %>% 
-  select(zcta, year, month, licensed_capacity, pop_5_and_under) %>% 
+# Filter the capacity deserts to data from 2021 and 2022 and remove non-desert zctas
+supply_and_demand_2021_2022 <- childcare_supply_and_demand_2019_2023 %>% 
   filter(year %in% c("2021", "2022")) %>% 
-  group_by(zcta, year)  %>% 
-  summarize(ratio = sum(pop_5_and_under, na.rm = TRUE) / sum(licensed_capacity, na.rm = TRUE), pop_5_and_under = mean(pop_5_and_under)) %>% 
-  filter(ratio >= 3)  %>% 
-  mutate(zcta = as.character(zcta))
+  mutate(ratio = pop_5_and_under / licensed_capacity) %>% 
+  mutate(status = case_when(ratio < 3 ~ "non-desert", 
+                            ratio >= 3 ~ "desert", 
+                            is.na(ratio) & pop_5_and_under >= 50 ~ "desert",
+                            is.na(ratio) & pop_5_and_under < 50 ~ "non-desert",
+                            TRUE ~ "non-desert")) 
+
 
 # This join is for all funding together 
 relief_to_desert_join <- relief_zcta %>% 
   group_by(zcta, year) %>% 
   summarize(total = sum(amount)) %>% 
-  left_join(childcare_aware_2021_2022, by = c("zcta", "year")) %>% 
-  mutate(status = case_when(is.na(ratio) ~ "non-desert", TRUE ~ "desert"))
+  left_join(supply_and_demand_2021_2022, by = c("zcta", "year")) 
 
 ```
 
@@ -335,6 +329,8 @@ relief_to_desert_join <- relief_zcta %>%
 total_desert_relief <-  relief_to_desert_join %>% 
   group_by(status) %>% 
   summarize(total = sum(total))
+
+portion_to_deserts <- 55014524/229363334
 ```
 
 
@@ -360,10 +356,10 @@ datatable(total_desert_relief, filter = 'top', class = 'cell-border stripe order
 relief_to_desert_type_join <- relief_zcta %>% 
   group_by(zcta, year, type) %>% 
   summarize(total = sum(amount)) %>% 
-  left_join(childcare_aware_2021_2022, by = c("zcta", "year")) %>% 
+  left_join(supply_and_demand_2021_2022, by = c("zcta", "year")) %>% 
   mutate(status = case_when(is.na(ratio) ~ "non-desert", TRUE ~ "desert")) %>% 
   group_by(type, status) %>% 
-  summarize(total = sum(total)) %>% 
+  summarize(total = sum(total, na.rm = TRUE)) %>% 
   pivot_wider(names_from = status, values_from = total)
 
 #write.csv(relief_to_desert_type_join, "datwrapper_stacked_bars.csv")
