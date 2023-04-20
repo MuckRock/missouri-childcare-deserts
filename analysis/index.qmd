@@ -124,7 +124,8 @@ tm_shape(map_df_sf) +
 
 ```{r}
 deserts_2023 <- supply_and_demand_2023 %>% 
-  filter(status %in% c("desert", "extreme"))
+  filter(status %in% c("desert", "extreme")) %>% 
+  select(zcta, pop_5_and_under)
 
 # 202,318 in 227 zctas that are childcare deserts
 sum(deserts_2023$pop_5_and_under, na.rm = TRUE)
@@ -181,7 +182,7 @@ datatable(mo_zctas_with_pop, filter = 'top', class = 'cell-border stripe order-c
 
 
 # How did childcare deserts change during the pandemic?
-From 2019 to September 2020, the number of childcare programs decreased by 30%, leaving 70,000 more children in childcare deserts than the year before. During 2020, the number of children in childcare deserts was the highest it has reached in the last several years. 
+From 2019 to September 2020, the number of childcare programs decreased by 30%, leaving 80,000 more children in childcare deserts than the year before. During 2020, the number of children in childcare deserts was the highest it has reached in the last several years. 
 
 The number of programs bounced back sharply by six months later though, and since 2021, the number of children in childcare deserts has steadily towards where it was pre-pandemic. 
 
@@ -201,6 +202,8 @@ num_programs_yearly <- childcare_aware %>%
   group_by(year, month) %>% 
   summarize(num_program = sum(childcare_programs))
 
+pandemic_change_percent <- (192993 - 273570)/273570
+pandemic_change <- 273570 - 192993
  
 ```
 ## Number of children in childcare deserts by month and year
@@ -298,9 +301,9 @@ datatable(real_capacity, filter = 'top', class = 'cell-border stripe order-colum
 
 ```
 
-# Did pandemic relief funding go to childcare desert zips we've indentified?
+# Did pandemic relief funding go to childcare desert zips we've identified?
 
-Of the total of 229,363,334 dollars in the data we recieved, 55,014,524, or about fourth of it went to childcare deserts.
+Of the total of 229,363,334 dollars in the data we received, 55,014,524, or about fourth of it went to childcare deserts.
 
 
 ```{r}
