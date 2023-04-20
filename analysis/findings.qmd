@@ -38,7 +38,7 @@ childcare_aware_2023 <- childcare_aware %>%
   filter(year == 2023)
 
 # Load all zctas not included in ChildCareAware survey 
-# There are 1023 unique zctas in MO according to thise crosswalk
+# There are 1023 unique zctas in MO according to these crosswalk
 mo_zctas <- read_excel(here("data", "raw", "ZIPCodetoZCTACrosswalk2021UDS.xlsx"), sheet = 1) %>% 
   clean_names() %>% 
   filter(state == "MO") %>% 
@@ -64,13 +64,32 @@ zip_zcta_crosswalk <- read_excel(here("data", "raw", "ZIPCodetoZCTACrosswalk2021
 relief_zcta <- relief_funding %>% 
   inner_join(zip_zcta_crosswalk, by = c("zip" = "zip_code"))
   
+
+
+```
+
+```{r}
+# Join MO ZCTAs with ACS data to catch zip codes with no providers but more than TK children
+no_provider_join <- mo_zctas %>% 
+  left_join(acs, by = c("zcta" = "GEOID")) %>% 
+  select(zcta, pop_5_and_under)
+
 # Add back in all zctas not included in survey so that we can map them all together
 map_df <-  childcare_aware_2023 %>% 
-  right_join(mo_zctas, by = "zcta") %>% 
+  right_join(no_provider_join, by = c("zcta", "pop_5_and_under")) %>%  
   mutate(ratio = pop_5_and_under / licensed_capacity) %>% 
-  mutate(status = case_when(is.na(ratio) ~ "non-desert", ratio < 3 ~ "non-desert", ratio >= 3 & ratio < 10 ~ "desert", ratio >= 10 ~ "extreme", TRUE ~ "test")) %>% 
-  mutate(status_num = case_when(is.na(ratio) ~ 0, ratio < 3 ~ 0, ratio >= 3 & ratio < 10 ~ 1, ratio >= 10 ~ 2, TRUE ~ 0)) %>% 
+  mutate(status = case_when(ratio < 3 ~ "non-desert", 
+                            ratio >= 3 & ratio < 10 ~ "desert", 
+                            ratio >= 10 ~ "extreme", 
+                            is.na(ratio) & pop_5_and_under >= 50 ~ "desert",
+                            is.na(ratio) & pop_5_and_under < 50 ~ "non-desert",
+                            TRUE ~ "non-desert")) %>%
+  mutate(status_num = case_when(status == "non-desert" ~ 0,
+                                status == "desert" ~ 1,
+                                status == "extreme" ~ 3)) %>% 
   select(zcta, status, status_num, ratio)
+
+#write.csv(map_df, "datawrapper_map.csv")
 
 ```
 
@@ -79,8 +98,8 @@ map_df <-  childcare_aware_2023 %>%
 # Now we can use zctas to get geoms for mapping 
 
 # Get the 2017-2021 5-year ACS ZTCAs for the whole US so that we can join these with zip codes and get geoms for mapping
-zcta_geoms <- get_acs(geography = "zip code tabulation area", variables = "B19013_001",
-                summary_var = "B01001_001", geometry = TRUE)  %>% 
+# B09001_005 is a dummy variable, we just need the geoms from the call
+zcta_geoms <- get_acs(geography = "zip code tabulation area", variables = "B09001_005", geometry = TRUE)  %>% 
   select(GEOID, geometry)
 
 # Join the survey and non-survey data with geoms from Census for mapping 
@@ -346,6 +365,8 @@ relief_to_desert_type_join <- relief_zcta %>%
   group_by(type, status) %>% 
   summarize(total = sum(total)) %>% 
   pivot_wider(names_from = status, values_from = total)
+
+#write.csv(relief_to_desert_type_join, "datwrapper_stacked_bars.csv")
 
 ```
 
