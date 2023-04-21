@@ -26,7 +26,8 @@ options(tigris_use_cache = TRUE)
 tmap_mode("view")
 ```
 
-# Missouri's childcare deserts in 2023, by Zip Code Tabulation Area
+# Finding #1: Map 
+- Missouri's childcare deserts in 2023, by Zip Code Tabulation Area
 ```{r}
 # LOAD DATA
 
@@ -111,20 +112,14 @@ tm_shape(map_df_sf) +
               legend.show = FALSE)
 ```
 
-## Methodology 
-- In the scipt `etl/2_get_scta-2017-2021-acs.R`, I retrieved the 5-Year ACS population estimates by ZCTA, and summed the age groups under six to get total amount of children five and under by ZCTA
-- The number of children five or under by ZCTA is from here on "demand" and I use it to create a ratio with the "supply," which is licensed capacity of facilities by zip code, provided by ChildCareAware
-- In `etl/3_zip-zcta-crosswalk-ChildCareAware.R`, I crosswalked the zip code level data from ChildCareAware to ZCTA level data so that it can be properly compared to ACS population estimates by ZCTA 
-- Any ZCTA where the demand is three times more than the supply is determined a "desert," or in other words, any ZCTA where the children-to-slot ratio is equal to or more than 3:1
-- Any ZCTA where the ratio is equal to or more than 10:1 is "extreme" and marked in darker red for now on the map
+# Finding #2: Number of children in childcare deserts
 
-# Total number of children five or under in childcare deserts across Missouri in 2023
-
-202,318 children of five or under across Missouri live in zip codes areas that are childcare deserts. This is almost half of children five or under.  
+- 202,318 children of five and under across Missouri live in zip codes areas that are childcare deserts. This is almost half of the 442,254 children five and under
 
 ```{r}
 deserts_2023 <- supply_and_demand_2023 %>% 
-  filter(status %in% c("desert", "extreme"))
+  filter(status %in% c("desert", "extreme")) %>% 
+  select(zcta, pop_5_and_under)
 
 # 202,318 in 227 zctas that are childcare deserts
 sum(deserts_2023$pop_5_and_under, na.rm = TRUE)
@@ -176,14 +171,10 @@ datatable(mo_zctas_with_pop, filter = 'top', class = 'cell-border stripe order-c
 
 ```
 
-## Methodology
-- The number of children in deserts is the total amount of children in zctas with ratios greater than or equal to 3:1 OR any zip code with more than 50 children where there are no providers 
+# Finding #3: Pandemic changes in childcare 
 
-
-# How did childcare deserts change during the pandemic?
-From 2019 to September 2020, the number of childcare programs decreased by 30%, leaving 70,000 more children in childcare deserts than the year before. During 2020, the number of children in childcare deserts was the highest it has reached in the last several years. 
-
-The number of programs bounced back sharply by six months later though, and since 2021, the number of children in childcare deserts has steadily towards where it was pre-pandemic. 
+- From 2019 to September 2020, the number of childcare programs decreased by 30%, leaving 80,000 more children in childcare deserts than the year before. During 2020, the number of children in childcare deserts was the highest it has reached in the last several years
+- The number of programs bounced back sharply by six months later though, and since 2021, the number of children in childcare deserts has steadily towards where it was pre-pandemic
 
 ```{r}
 yearly_deserts <- childcare_supply_and_demand_2019_2023 %>% 
@@ -239,9 +230,9 @@ datatable(num_programs_yearly, filter = 'top', class = 'cell-border stripe order
 
 ```
 
-# Age breakouts of programs that recieved money for startup, expansion, or enhancement
+# Finding #4: Age breakouts of for startup, expansion, or enhancement
 
-Of programs that received CRRSA funding for startup, expansion, or enhancement, less than half as many slots were added for infant and toddlers as for preschool aged children. 
+- Of programs that received CRRSA funding for startup, expansion, or enhancement, less than half as many slots were added for infant and toddlers as for preschool aged children
 
 ```{r}
 age_breakouts <- crrsa_startup_expansion %>% 
@@ -270,44 +261,23 @@ datatable(age_breakouts, filter = 'top', class = 'cell-border stripe order-colum
                             ))
 
 ```
-# Potential difference between capacity and real number of slots
 
-Of programs that received CRRSA funding for startup, expansion, or enhancement, several programs marked their anticipated capacity at 10 or more children less than the number of slots they added. 
+# Finding #5: Funding data we recieved shows less money went to deserts
 
-```{r}
-real_capacity <- crrsa_startup_expansion %>% 
-  select(dvn, at_startup, number_of_infant_toddler_slots_adding, number_of_preschool_slots_adding, number_of_school_age_slots_adding, total_anticipated_capacity) %>% 
-  mutate(slots = number_of_infant_toddler_slots_adding + number_of_preschool_slots_adding + number_of_school_age_slots_adding) %>% 
-  filter(slots > total_anticipated_capacity) 
-```
 
-```{r}
-#| output: true
-#| column: page
-datatable(real_capacity, filter = 'top', class = 'cell-border stripe order-column', extensions = 'Buttons',
-
-                            options = list(
-                                paging = TRUE,
-                                searching = TRUE,
-                                fixedColumns = TRUE,
-                                autoWidth = TRUE,
-                                ordering = TRUE,
-                                dom = 'tB',
-                                buttons = c('copy', 'csv', 'excel')
-                            ))
-
-```
-
-# Did pandemic relief funding go to childcare desert zips we've indentified?
-
-Of the total of 229,363,334 dollars in the data we recieved, 55,014,524, or about fourth of it went to childcare deserts.
+- Of the total of 114,681,667 dollars in the data we received, less than a third - 25,757,599 - of it went to childcare deserts
+- Our 114,681,667 dollars is about half of the over 230,000,00 DESE has to spend in total through the several different funding sources
+- 203 of 230 million has been awarded so far in total
+- It looks like 170 million in total has been awarded from the grants we received, which more recent data would likely show. Our few months lag is the reason we don't have all of that 
 
 
 ```{r}
-# Filter the capacity deserts to data from 2021 and 2022 and remove non-desert zctas
+# Filter the capacity deserts to data from 2021 and 2022 and remove non-desert zctas, and aggregate to yearly
 supply_and_demand_2021_2022 <- childcare_supply_and_demand_2019_2023 %>% 
   filter(year %in% c("2021", "2022")) %>% 
-  mutate(ratio = pop_5_and_under / licensed_capacity) %>% 
+  group_by(zcta, year) %>% 
+  summarize(pop_5_and_under = sum(pop_5_and_under), licensed_capacity = sum(licensed_capacity)) %>% 
+  mutate(ratio = pop_5_and_under/licensed_capacity) %>% 
   mutate(status = case_when(ratio < 3 ~ "non-desert", 
                             ratio >= 3 ~ "desert", 
                             is.na(ratio) & pop_5_and_under >= 50 ~ "desert",
@@ -330,7 +300,10 @@ total_desert_relief <-  relief_to_desert_join %>%
   group_by(status) %>% 
   summarize(total = sum(total))
 
-portion_to_deserts <- 55014524/229363334
+portion_to_deserts <- 25757599/88924069
+# Check total here with total from raw dataset to make sure now data went missing on joins 
+# 114681667 in raw data matches exact amount here +1 for rounded 
+check_total <- 25757599 + 88924069
 ```
 
 
@@ -382,8 +355,60 @@ datatable(relief_to_desert_type_join, filter = 'top', class = 'cell-border strip
                             ))
 
 ```
-## Methodology
+```{r}
+dese_funds <- read_excel(here("data", "processed", "dese_funds_update.xlsx")) %>% 
+  clean_names() %>% 
+  mutate(awarded_approved_amount = as.numeric(if_else(awarded_approved_amount == "Pending", "0", awarded_approved_amount))) %>% 
+  mutate(paid_amount_as_of_4_14_23 = as.numeric(paid_amount_as_of_4_14_23))
 
-- In the script `4_clean-relief-data.R`, I cleaned and parsed addresses for each application to connect it to a valid Missouri zip code. In a several instances, zip codes were typed in correctly, and I had to manually look up the address and correct the zip code. These instances are marked accordingly in the script. 
-- I then concatenated all the relief data we received together, by program, amount and zip 
-- Finally, I crosswalked the zip codes to ZCTAs so that I could then compare how much money went to ZCTAs labeled as a desert versus ones labeled as not a desert 
+
+our_foia_data <- dese_funds %>% 
+  filter(application_name %in% c("Enhancement", "Paycheck Protection", "Technical Business Assistance",
+                                 "Expansion", "Startup", "Retention of Staff", "Annual Training Costs"))
+
+foia_awarded <- sum(our_foia_data$awarded_approved_amount)
+
+foia_paid <- sum(our_foia_data$paid_amount_as_of_4_14_23)
+
+total_awarded <- sum(dese_funds$awarded_approved_amount)
+
+total_paid <- sum(dese_funds$paid_amount_as_of_4_14_23)
+
+
+our_portion <- 114681667/233314660
+
+```
+## All money in data sent us from DESE 
+```{r}
+#| output: true
+#| column: page
+datatable(dese_funds, filter = 'top', class = 'cell-border stripe order-column', extensions = 'Buttons',
+
+                            options = list(
+                                paging = TRUE,
+                                searching = TRUE,
+                                fixedColumns = TRUE,
+                                autoWidth = TRUE,
+                                ordering = TRUE,
+                                dom = 'tB',
+                                buttons = c('copy', 'csv', 'excel')
+                            ))
+
+```
+## Current numbers for our requests in data sent us from DESE 
+```{r}
+#| output: true
+#| column: page
+datatable(our_foia_data, filter = 'top', class = 'cell-border stripe order-column', extensions = 'Buttons',
+
+                            options = list(
+                                paging = TRUE,
+                                searching = TRUE,
+                                fixedColumns = TRUE,
+                                autoWidth = TRUE,
+                                ordering = TRUE,
+                                dom = 'tB',
+                                buttons = c('copy', 'csv', 'excel')
+                            ))
+
+```

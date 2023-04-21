@@ -191,4 +191,7 @@ crrsa_tech_asistance <-  read_excel(here("data", "raw", "CRRSA Technical Busines
 all_relief <- rbind(arpa_paycheck_3, arpa_training, arpa_retention, crrsa_paycheck_1, crrsa_paycheck_2, crrsa_startup_expansion, 
                     crrsa_tech_asistance)
 
+
+total_money <- sum(all_relief$amount)
+
 write.csv(all_relief, "data/processed/all_relief_cleaned.csv")

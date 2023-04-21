@@ -20,3 +20,6 @@ foia_paid <- sum(our_foia_data$paid_amount_as_of_4_14_23)
 total_awarded <- sum(dese_funds$awarded_approved_amount)
 
 total_paid <- sum(dese_funds$paid_amount_as_of_4_14_23)
+
+
+our_portion <- 114681667/233314660
