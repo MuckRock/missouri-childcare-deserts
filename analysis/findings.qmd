@@ -82,7 +82,14 @@ map_df <- supply_and_demand_2023 %>%
                                 status == "extreme" ~ 3)) %>% 
     select(zcta, status, status_num, ratio)
 
-#write.csv(map_df, "datawrapper_map.csv")
+datawrapper_df <- supply_and_demand_2023 %>% 
+  mutate(status_num = case_when(status == "non-desert" ~ 0,
+                                status == "desert" ~ 1,
+                                status == "extreme" ~ 3)) %>% 
+  mutate(ratio = round(ratio, digits = 0)) %>% 
+  mutate(dw = case_when(is.na(pop_5_and_under) ~ paste("0 children and no childcare programs"), is.na(ratio) ~ paste(pop_5_and_under, "children and no childcare programs"), TRUE ~ paste("Child to slot ratio is", ratio, ":1")))
+
+write.csv(datawrapper_df, "datawrapper_map.csv")
 
 ```
 
@@ -286,6 +293,7 @@ supply_and_demand_2021_2022 <- childcare_supply_and_demand_2019_2023 %>%
 
 
 # This join is for all funding together 
+# Relief zcta has 380 unique ZCTAs, 661 unique year/zcta combos
 relief_to_desert_join <- relief_zcta %>% 
   group_by(zcta, year) %>% 
   summarize(total = sum(amount)) %>% 
@@ -329,13 +337,12 @@ datatable(total_desert_relief, filter = 'top', class = 'cell-border stripe order
 relief_to_desert_type_join <- relief_zcta %>% 
   group_by(zcta, year, type) %>% 
   summarize(total = sum(amount)) %>% 
-  left_join(supply_and_demand_2021_2022, by = c("zcta", "year")) %>% 
-  mutate(status = case_when(is.na(ratio) ~ "non-desert", TRUE ~ "desert")) %>% 
+  left_join(supply_and_demand_2021_2022, by = c("zcta", "year"))  %>% 
   group_by(type, status) %>% 
   summarize(total = sum(total, na.rm = TRUE)) %>% 
   pivot_wider(names_from = status, values_from = total)
 
-#write.csv(relief_to_desert_type_join, "datwrapper_stacked_bars.csv")
+write.csv(relief_to_desert_type_join, "datwrapper_stacked_bars.csv")
 
 ```
 
