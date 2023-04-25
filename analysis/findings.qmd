@@ -89,8 +89,8 @@ datawrapper_df <- supply_and_demand_2023 %>%
   mutate(ratio = case_when(ratio >= 3 ~ round(ratio, digits = 0), 
                            TRUE ~ round(ratio, digits = 1))) %>% 
   mutate(dw = case_when(pop_5_and_under == 0 & childcare_programs >=1 ~ paste("0 children and", licensed_capacity, "slots"), 
-                        is.na(pop_5_and_under) | ratio == 0 ~ paste("0 children and no childcare programs"), 
-                        is.na(ratio) ~ paste(pop_5_and_under, "children and no childcare programs"), 
+                        is.na(pop_5_and_under) | ratio == 0 ~ paste("0 children and no child care programs"), 
+                        is.na(ratio) ~ paste(pop_5_and_under, "children and no child care programs"), 
                         TRUE ~ paste("Child to slot ratio is", ratio, ":1")))
 
 write.csv(datawrapper_df, "datawrapper_map.csv")
