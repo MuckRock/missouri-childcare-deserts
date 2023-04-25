@@ -7,7 +7,7 @@ The findings in the article [Missouri child care deserts now include nearly half
 
 ## Data 
 ### Supply of Missouri child care programs
-- The "supply" of child programs, [`data/raw/(data/raw/ChildCareAware_nov_2019_mar_2023`](data/raw/ChildCareAware_nov_2019_mar_2023.xlsx), was determind by the licensed capacity of programs by zip code, through data provided by the advocacy group [Child Care Aware](https://mochildcareaware.org/) who has pulled data from [Missouri’s active facility list](https://dese.mo.gov/media/file/active-facility-list-04012023) since 2019
+- The "supply" of child programs, [`data/raw/ChildCareAware_nov_2019_mar_2023`](data/raw/ChildCareAware_nov_2019_mar_2023.xlsx), was determind by the licensed capacity of programs by zip code, through data provided by the advocacy group [Child Care Aware](https://mochildcareaware.org/) who has pulled data from [Missouri’s active facility list](https://dese.mo.gov/media/file/active-facility-list-04012023) since 2019
 
 ### Demand for Missouri child care 
 - The demand for child care was determind by the number of children five and under by Zip Code Tabulation Area, using American Community Survey 5-Year Data (2017-2021). This methodology is similiar to the one used by [Child Care Aware Missouri](https://mochampionofchildren.com/caredeserts/) and in [child care research more broadly](childcareaccess.org/methods/)
@@ -19,6 +19,10 @@ The findings in the article [Missouri child care deserts now include nearly half
 
 
 ## Methodology 
+- Supply of Missouri child care programs by zip code was crosswalked to supply by ZCTA using [the popular UDS crosswalk](https://udsmapper.org/zip-code-to-zcta-crosswalk/) in [`etl/3_zip-zcta-crosswalk-ChildCareAware`](etl/3_zip-zcta-crosswalk-ChildCareAware.R). This is necessary to both map the data and to join the data to ACS population estimates, which are in ZCTA format, not ZIP. 
+- ZCTA-level supply was joined to demand (ACS estimates of population) in [`etl/4_append_all_pop_to_ChildCareAware`](etl/4_append_all_pop_to_ChildCareAware.R)
+- Grant applications with the address of each facility were cleaned and crosswalked to ZCTAs in [`etl/5_clean-relief-data`](etl/5_clean-relief-data.R). Several addresses had incorrect zip codes and these were manually changed by searching the address on Google Maps, after which each application's unique ID was marked in the code and commenting as zip code that was manually corrected. 
+- The file [`analysis/findings.qmd`](analysis/findings.qmd) brings these sources of data together to map ZCTA areas that qualify as child care deserts and assess whether funding from the grants we tracked went to those areas. 
 
 
 ## Questions / Feedback
