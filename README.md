@@ -7,11 +7,11 @@ The findings in the article [Missouri child care deserts now include nearly half
 
 ## Data 
 ### Supply of Missouri child care programs
-- We determind the "supply" of child programs, [`data/raw/ChildCareAware_nov_2019_mar_2023`](data/raw/ChildCareAware_nov_2019_mar_2023.xlsx), by the licensed capacity of programs by zip code, through data provided by the advocacy group [Child Care Aware](https://mochildcareaware.org/) who has pulled data from [Missouri’s active facility list](https://dese.mo.gov/media/file/active-facility-list-04012023) since 2019.
+- We determind the "supply" of child programs, [`data/raw/ChildCareAware_nov_2019_mar_2023`](data/raw/ChildCareAware_nov_2019_mar_2023.xlsx), by the licensed capacity of programs by ZIP code, through data provided by the advocacy group [Child Care Aware](https://mochildcareaware.org/) who has pulled data twice a year from [Missouri’s active facility list](https://dese.mo.gov/media/file/active-facility-list-04012023) since 2019.
 
 ### Demand for Missouri child care 
 - We determind the "demand" for child care by the number of children five and under by Zip Code Tabulation Area, using American Community Survey 5-Year Data (2017-2021). This methodology is similiar to the one used by [Child Care Aware Missouri](https://mochampionofchildren.com/caredeserts/) and in [child care research more broadly](childcareaccess.org/methods/).
-- We pulled ACS using the `tidycensus` package in [`etl/2_get-zcta-2017-2021-acs`](etl/2_get-zcta-2017-2021-acs.R) and stored in [`processed/pop_zcta_5acs`](processed/pop_zcta_5acs.csv).
+- We pulled ACS population estimates using the `tidycensus` package in [`etl/2_get-zcta-2017-2021-acs`](etl/2_get-zcta-2017-2021-acs.R) and stored in [`processed/pop_zcta_5acs`](processed/pop_zcta_5acs.csv).
 
 ### Pandemic funding and grant applications 
 - Through public records requests, MuckRock and The Missouri Indepedent recieved data on every application through seven grants in two federal COVID-19 relief programs — the Biden administration’s American Rescue Plan (ARPA) and the Coronavirus Response and Relief Supplemental Appropriations Act of 2021 (CRRSA).
