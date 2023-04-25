@@ -7,7 +7,7 @@ The findings in the article [Missouri child care deserts now include nearly half
 
 ## Data 
 ### Supply of Missouri child care programs
-- The "supply" of child programs, [`data/raw/(data/raw/ChildCareAware_nov_2019_mar_2023`](data/raw/ChildCareAware_nov_2019_mar_2023.xlsx), was determind by the licensed capacity of programs by zip code, through data provied by the advocacy group [Child Care Aware](https://mochildcareaware.org/) who has pulled data from [Missouri’s active facility list](https://dese.mo.gov/media/file/active-facility-list-04012023) since 2019
+- The "supply" of child programs, [`data/raw/(data/raw/ChildCareAware_nov_2019_mar_2023`](data/raw/ChildCareAware_nov_2019_mar_2023.xlsx), was determind by the licensed capacity of programs by zip code, through data provided by the advocacy group [Child Care Aware](https://mochildcareaware.org/) who has pulled data from [Missouri’s active facility list](https://dese.mo.gov/media/file/active-facility-list-04012023) since 2019
 
 ### Demand for Missouri child care 
 - The demand for child care was determind by the number of children five and under by Zip Code Tabulation Area, using American Community Survey 5-Year Data (2017-2021). This methodology is similiar to the one used by [Child Care Aware Missouri](https://mochampionofchildren.com/caredeserts/) and in [child care research more broadly](childcareaccess.org/methods/)
@@ -15,7 +15,7 @@ The findings in the article [Missouri child care deserts now include nearly half
 
 ### Pandemic funding and grant applications 
 - Through public records requests, MuckRock and The Missouri Indepedent recieved data on every application through seven grants in two federal COVID-19 relief programs — the Biden administration’s American Rescue Plan (ARPA) and the Coronavirus Response and Relief Supplemental Appropriations Act of 2021 (CRRSA)
-- The raw data for each application can be found in [`data/raw`](`data/raw`) with ARPA and CRRSA precedending the grant type, as in [`ARPA Paycheck Protection Round 3 with Paid`](data/ARPA Paycheck Protection Round 3 with Paid.xlsx)
+- The raw data for each application can be found in [`data/raw`](`data/raw`) with ARPA and CRRSA precedending the grant type, as in `ARPA Paycheck Protection Round 3 with Paid`
 
 
 ## Methodology 
