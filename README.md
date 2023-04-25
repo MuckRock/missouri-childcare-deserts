@@ -7,9 +7,10 @@ The findings in the article [Missouri child care deserts now include nearly half
 
 ## Data 
 ### Supply of Missouri child care programs
-- The "supply" of child programs, [`data/raw/(data/raw/ChildCareAware_nov_2019_mar_2023`](data/raw/ChildCareAware_nov_2019_mar_2023.xlsx), was determind by the licensed capacity of programs by zip code, through data provied by the advocacy group [Child Care Aware](https://mochildcareaware.org/) who has pulled data from [Missouri’s active facility list](https://dese.mo.gov/media/file/active-facility-list-04012023) since 2019. 
+The "supply" of child programs, [`data/raw/(data/raw/ChildCareAware_nov_2019_mar_2023`](data/raw/ChildCareAware_nov_2019_mar_2023.xlsx), was determind by the licensed capacity of programs by zip code, through data provied by the advocacy group [Child Care Aware](https://mochildcareaware.org/) who has pulled data from [Missouri’s active facility list](https://dese.mo.gov/media/file/active-facility-list-04012023) since 2019
 
-### 5-year American Community Survey estimates 
+### Demand for Missouri child care 
+- The demand for child care was determind by the number of children five and under by Zip Code Tabulation Area, using American Community Survey 5-Year Data (2017-2021). This methodology is similiar to the one used by [Child Care Aware Missouri](https://mochampionofchildren.com/caredeserts/) and in [child care research more broadly](childcareaccess.org/methods/). ACS data was pulled using the `tidycensus` package in [`etl/2_get-zcta-2017-2021-acs`](etl/2_get-zcta-2017-2021-acs.R) and stored in [`processed/pop_zcta_5acs`](processed/pop_zcta_5acs.csv)
 
 ### 
 
