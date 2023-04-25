@@ -7,7 +7,7 @@ The findings in the article [Missouri child care deserts now include nearly half
 
 ## Data 
 ### Supply of Missouri child care programs
-- The "supply" of child programs, [`data/raw/(data/raw/ChildCareAware_nov_2019_mar_2023`](data/raw/(data/raw/ChildCareAware_nov_2019_mar_2023), was determind by the licensed capacity of programs by zip code, through data provied by the advocacy group [Child Care Aware](https://mochildcareaware.org/) who has pulled data from [Missouri’s active facility list](https://dese.mo.gov/media/file/active-facility-list-04012023) since 2019. 
+- The "supply" of child programs, [`data/raw/(data/raw/ChildCareAware_nov_2019_mar_2023`](data/raw/(data/raw/ChildCareAware_nov_2019_mar_2023.xlsx), was determind by the licensed capacity of programs by zip code, through data provied by the advocacy group [Child Care Aware](https://mochildcareaware.org/) who has pulled data from [Missouri’s active facility list](https://dese.mo.gov/media/file/active-facility-list-04012023) since 2019. 
 
 ### 5-year American Community Survey estimates 
 
