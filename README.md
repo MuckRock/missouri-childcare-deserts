@@ -15,7 +15,7 @@ The findings in the article [Missouri child care deserts now include nearly half
 
 ### Pandemic funding and grant applications 
 - Through public records requests, MuckRock and The Missouri Indepedent recieved data on every application through seven grants in two federal COVID-19 relief programs — the Biden administration’s American Rescue Plan (ARPA) and the Coronavirus Response and Relief Supplemental Appropriations Act of 2021 (CRRSA).
-- The raw data for each application can be found in [`data/raw`](`data/raw`) with ARPA and CRRSA and the grant type in the file name, as in `ARPA Paycheck Protection Round 3 with Paid`.
+- The raw data for each application can be found in [`data/raw`](`data/raw`) with "ARPA" and "CRRSA" and the grant type in the file name, as in `ARPA Paycheck Protection Round 3 with Paid`.
 - [`Data/processed/dese_funds_update`](Data/processed/dese_funds_update.csv) is an updated list as of 4/14/2023 of the several types of funding for child care through Missouri Department of Elementary and Secondary Education and how much has been spent of each funding source and grant 
 
 
