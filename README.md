@@ -2,7 +2,7 @@
 
 This repository contains data and findings for an ongoing collaboration between MuckRock and The Missouri Indepedent on Missouri's "child care deserts", areas where there are more than three children under the age of 5 for every licensed child care slot or no licensed slots at all. 
 
-The findings in the article [Missouri child care deserts now include nearly half of kids 5 and under](link to article) are summarized in the file [`analysis/findings.qmd`](analysis/findings.qmd). 
+The findings in the article [Missouri child care deserts now include nearly half of kids 5 and under](muckrock.com) are summarized in the file [`analysis/findings.qmd`](analysis/findings.qmd). 
 
 
 ## Data 
